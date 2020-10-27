@@ -53,13 +53,13 @@ func (server *Server) Listen() {
 	server.checkError(err)
 
 	for {
-		fmt.Println("Listening")
 		conn, err := listener.Accept()
 		if err != nil {
 			server.errors = append(server.errors, err)
 			continue
 		}
 
+		fmt.Println(conn.LocalAddr())
 		server.conns = append(server.conns, conn)
 
 		decoder := gob.NewDecoder(conn)
