@@ -1,15 +1,16 @@
 package client
 
 import (
-	"Networker/models"
 	"encoding/gob"
 	"fmt"
 	"net"
 	"os"
+
+	"github.com/mradrianhh/Networker/models"
 )
 
-// MessageServer sends a message to the server and returns the response.
-func MessageServer(message models.Message, service string, network string) (models.Message, error) {
+// Request sends a message and returns the response.
+func Request(message models.Message, service string, network string) (models.Message, error) {
 	if network == "" {
 		network = "tcp"
 	}
@@ -17,7 +18,7 @@ func MessageServer(message models.Message, service string, network string) (mode
 	conn, err := net.Dial(network, service)
 
 	if err != nil {
-		return models.ErrorMessage, err
+		return models.NilMessage, err
 	}
 
 	encoder := gob.NewEncoder(conn)

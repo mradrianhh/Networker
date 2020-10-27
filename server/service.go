@@ -1,11 +1,12 @@
 package server
 
 import (
-	"Networker/models"
 	"encoding/gob"
 	"fmt"
 	"net"
 	"os"
+
+	"github.com/mradrianhh/Networker/models"
 )
 
 // Run starts the service.
