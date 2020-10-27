@@ -1,7 +1,16 @@
 package networker
 
-// MessageType is a string representation of the type of message. I.E "AUTHENTICATION", "CONFIRMATION", etc.
+// MessageType is deprecated.
 type MessageType string
+
+// Message types.
+const (
+	RESPONSE = "RESPONSE"
+	REQUEST  = "REQUEST"
+)
 
 // ResponseCode ...
 type ResponseCode string
+
+// RequestCode ...
+type RequestCode string

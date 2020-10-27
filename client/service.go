@@ -9,8 +9,8 @@ import (
 	"github.com/mradrianhh/Networker/models"
 )
 
-// Request sends a message and returns the response.
-func Request(message models.Message, service string, network string) (models.Message, error) {
+// Request sends a request and returns the response.
+func Request(request models.Request, service string, network string) (models.Response, error) {
 	if network == "" {
 		network = "tcp"
 	}
@@ -18,13 +18,13 @@ func Request(message models.Message, service string, network string) (models.Mes
 	conn, err := net.Dial(network, service)
 
 	if err != nil {
-		return models.NilMessage, err
+		return models.Response{}, err
 	}
 
 	encoder := gob.NewEncoder(conn)
-	encoder.Encode(message)
+	encoder.Encode(request)
 
-	var response models.Message
+	var response models.Response
 	decoder := gob.NewDecoder(conn)
 	decoder.Decode(&response)
 	return response, nil
