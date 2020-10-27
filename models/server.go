@@ -65,6 +65,7 @@ func (server *Server) Listen() {
 		decoder := gob.NewDecoder(conn)
 		var request Request
 		decoder.Decode(&request)
+		fmt.Println(request.requestCode)
 		server.messages = append(server.messages, request)
 		if err := server.handlers[request.requestCode](request, conn); err != nil {
 			server.errors = append(server.errors, err)

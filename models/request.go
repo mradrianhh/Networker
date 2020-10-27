@@ -16,7 +16,12 @@ func NewRequest(requestCode networker.RequestCode) Request {
 	}
 }
 
-// MessageType ...
+// MessageType returns the messagetype of the request.
 func (request Request) MessageType() networker.MessageType {
 	return request.messageType
+}
+
+// RequestCode returns the requestcode of the request.
+func (request Request) RequestCode() networker.RequestCode {
+	return request.requestCode
 }

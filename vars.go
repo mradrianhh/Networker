@@ -14,3 +14,8 @@ type ResponseCode string
 
 // RequestCode ...
 type RequestCode string
+
+// Response codes.
+const (
+	USERNAME = "USERNAME"
+)

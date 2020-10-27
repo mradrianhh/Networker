@@ -16,7 +16,12 @@ func NewResponse(responseCode networker.ResponseCode) Response {
 	}
 }
 
-// MessageType ...
+// MessageType returns the messagetype of the response.
 func (response Response) MessageType() networker.MessageType {
 	return response.messageType
+}
+
+// ResponseCode returns the response code of the response.
+func (response Response) ResponseCode() networker.ResponseCode {
+	return response.responseCode
 }
