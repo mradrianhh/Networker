@@ -32,6 +32,18 @@ type Server struct {
 	handlers map[networker.RequestCode]handler
 }
 
+// NewServer returns a new server-object. The lists are empty and must be initialized manually.
+func NewServer(network string, address string) Server {
+	return Server{
+		network:  network,
+		address:  address,
+		conns:    []net.Conn{},
+		errors:   []error{},
+		messages: []Message{},
+		handlers: make(map[networker.RequestCode]handler),
+	}
+}
+
 // Listen listens for connections, reads the request, and responds with the appropriate handler-method.
 func (server *Server) Listen() {
 	tcpAddress, err := net.ResolveTCPAddr(server.network, server.address)
@@ -41,6 +53,7 @@ func (server *Server) Listen() {
 	server.checkError(err)
 
 	for {
+		fmt.Println("Listening")
 		conn, err := listener.Accept()
 		if err != nil {
 			server.errors = append(server.errors, err)
