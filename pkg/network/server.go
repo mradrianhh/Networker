@@ -68,14 +68,19 @@ func (server *Server) Listen() {
 		decoder := gob.NewDecoder(conn)
 		var request models.Request
 		decoder.Decode(&request)
-		fmt.Println(request.RequestCode())
+		fmt.Println(request.RequestCode)
 		server.messages = append(server.messages, request)
-		if err := server.handlers[request.RequestCode()](request, conn); err != nil {
-			server.respond(models.NewResponse(models.ERROR), conn)
-			server.errors = append(server.errors, err)
-			continue
+		
+		if handler, exists := server.handlers[request.RequestCode]; exists {
+			if err := handler(request, conn); err != nil {
+				server.respond(models.NewResponse(models.ERROR), conn)
+				server.errors = append(server.errors, err)
+				continue
+			} else {
+				server.respond(models.NewResponse(models.CONFIRMATION), conn)
+			}
 		} else {
-			server.respond(models.NewResponse(models.CONFIRMATION), conn)
+			server.respond(models.NewResponse(models.ERROR), conn)
 		}
 	}
 }

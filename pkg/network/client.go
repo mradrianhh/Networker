@@ -74,8 +74,8 @@ func (client *Client) Listen() {
 		decoder := gob.NewDecoder(conn)
 		var request models.Request
 		decoder.Decode(&request)
-		fmt.Println(request.RequestCode())
-		if err := client.handlers[request.RequestCode()](request, conn); err != nil {
+		fmt.Println(request.RequestCode)
+		if err := client.handlers[request.RequestCode](request, conn); err != nil {
 			client.Respond(models.NewResponse(models.ERROR), conn)
 			client.errors = append(client.errors, err)
 			continue

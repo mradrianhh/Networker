@@ -7,4 +7,4 @@ import (
 )
 
 // Handler ...
-type Handler func(models.Message, net.Conn) error
+type Handler func(models.Request, net.Conn) error
