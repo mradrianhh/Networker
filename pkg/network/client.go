@@ -1,4 +1,4 @@
-package models
+package network
 
 import (
 	"encoding/gob"
@@ -6,7 +6,7 @@ import (
 	"net"
 	"os"
 
-	networker "github.com/mradrianhh/Networker"
+	"github.com/mradrianhh/Networker/pkg/network/models"
 )
 
 // Client ...
@@ -14,7 +14,7 @@ type Client struct {
 	network  string
 	address  string
 	errors   []error
-	handlers map[networker.RequestCode]Handler
+	handlers map[models.RequestCode]Handler
 }
 
 // NewClient ...
@@ -23,33 +23,33 @@ func NewClient(network string, address string) Client {
 		network:  network,
 		address:  address,
 		errors:   []error{},
-		handlers: make(map[networker.RequestCode]Handler),
+		handlers: make(map[models.RequestCode]Handler),
 	}
 }
 
 // AddHandler ...
-func (client *Client) AddHandler(requestCode networker.RequestCode, handler Handler) {
+func (client *Client) AddHandler(requestCode models.RequestCode, handler Handler) {
 	client.handlers[requestCode] = handler
 }
 
 // Request ...
-func (client Client) Request(request Request) (Response, error) {
+func (client Client) Request(request models.Request) (models.Response, error) {
 	conn, err := net.Dial(client.network, client.address)
 	if err != nil {
-		return Response{}, err
+		return models.Response{}, err
 	}
 
 	encoder := gob.NewEncoder(conn)
 	encoder.Encode(request)
 
-	var response Response
+	var response models.Response
 	decoder := gob.NewDecoder(conn)
 	decoder.Decode(&response)
 	return response, nil
 }
 
 // Respond ...
-func (client Client) Respond(response Response, conn net.Conn) {
+func (client Client) Respond(response models.Response, conn net.Conn) {
 	encoder := gob.NewEncoder(conn)
 	encoder.Encode(response)
 }
@@ -72,15 +72,15 @@ func (client *Client) Listen() {
 		fmt.Println(conn.LocalAddr())
 
 		decoder := gob.NewDecoder(conn)
-		var request Request
+		var request models.Request
 		decoder.Decode(&request)
-		fmt.Println(request.requestCode)
-		if err := client.handlers[request.requestCode](request, conn); err != nil {
-			client.Respond(NewResponse(networker.ERROR), conn)
+		fmt.Println(request.RequestCode())
+		if err := client.handlers[request.RequestCode()](request, conn); err != nil {
+			client.Respond(models.NewResponse(models.ERROR), conn)
 			client.errors = append(client.errors, err)
 			continue
 		} else {
-			client.Respond(NewResponse(networker.CONFIRMATION), conn)
+			client.Respond(models.NewResponse(models.CONFIRMATION), conn)
 		}
 	}
 }

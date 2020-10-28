@@ -1,4 +1,4 @@
-package networker
+package main
 
 /*
 Networker is a server-client based networking package for easy communications between terminal-based programs.

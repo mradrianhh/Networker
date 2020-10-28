@@ -1,27 +1,25 @@
 package models
 
-import networker "github.com/mradrianhh/Networker"
-
 // Response is the type. Use NewResponse to initialize a new response-object.
 type Response struct {
-	messageType  networker.MessageType
-	responseCode networker.ResponseCode
+	messageType  MessageType
+	responseCode ResponseCode
 }
 
 // NewResponse returns a new response-object with the given responsecode.
-func NewResponse(responseCode networker.ResponseCode) Response {
+func NewResponse(responseCode ResponseCode) Response {
 	return Response{
-		messageType:  networker.RESPONSE,
+		messageType:  RESPONSE,
 		responseCode: responseCode,
 	}
 }
 
 // MessageType returns the messagetype of the response.
-func (response Response) MessageType() networker.MessageType {
+func (response Response) MessageType() MessageType {
 	return response.messageType
 }
 
 // ResponseCode returns the response code of the response.
-func (response Response) ResponseCode() networker.ResponseCode {
+func (response Response) ResponseCode() ResponseCode {
 	return response.responseCode
 }

@@ -1,4 +1,4 @@
-package models
+package network
 
 import (
 	"encoding/gob"
@@ -6,7 +6,7 @@ import (
 	"net"
 	"os"
 
-	networker "github.com/mradrianhh/Networker"
+	"github.com/mradrianhh/Networker/pkg/network/models"
 )
 
 /*
@@ -26,8 +26,8 @@ type Server struct {
 	address  string
 	conns    []net.Conn
 	errors   []error
-	messages []Message
-	handlers map[networker.RequestCode]Handler
+	messages []models.Message
+	handlers map[models.RequestCode]Handler
 }
 
 // NewServer returns a new server-object. The lists are empty and must be initialized manually.
@@ -37,13 +37,13 @@ func NewServer(network string, address string) Server {
 		address:  address,
 		conns:    []net.Conn{},
 		errors:   []error{},
-		messages: []Message{},
-		handlers: make(map[networker.RequestCode]Handler),
+		messages: []models.Message{},
+		handlers: make(map[models.RequestCode]Handler),
 	}
 }
 
 // AddHandler adds a handler-method to the server.
-func (server *Server) AddHandler(requestCode networker.RequestCode, handler Handler) {
+func (server *Server) AddHandler(requestCode models.RequestCode, handler Handler) {
 	server.handlers[requestCode] = handler
 }
 
@@ -66,22 +66,22 @@ func (server *Server) Listen() {
 		server.conns = append(server.conns, conn)
 
 		decoder := gob.NewDecoder(conn)
-		var request Request
+		var request models.Request
 		decoder.Decode(&request)
-		fmt.Println(request.requestCode)
+		fmt.Println(request.RequestCode())
 		server.messages = append(server.messages, request)
-		if err := server.handlers[request.requestCode](request, conn); err != nil {
-			server.respond(NewResponse(networker.ERROR), conn)
+		if err := server.handlers[request.RequestCode()](request, conn); err != nil {
+			server.respond(models.NewResponse(models.ERROR), conn)
 			server.errors = append(server.errors, err)
 			continue
 		} else {
-			server.respond(NewResponse(networker.CONFIRMATION), conn)
+			server.respond(models.NewResponse(models.CONFIRMATION), conn)
 		}
 	}
 }
 
 // Broadcast ...
-func (server Server) broadcast(message Message) {
+func (server Server) broadcast(message models.Message) {
 	for i := 0; i < len(server.conns); i++ {
 		encoder := gob.NewEncoder(server.conns[i])
 		encoder.Encode(message)
@@ -89,7 +89,7 @@ func (server Server) broadcast(message Message) {
 }
 
 // Respond ...
-func (server Server) respond(response Response, conn net.Conn) {
+func (server Server) respond(response models.Response, conn net.Conn) {
 	encoder := gob.NewEncoder(conn)
 	encoder.Encode(response)
 }

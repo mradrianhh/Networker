@@ -1,27 +1,25 @@
 package models
 
-import networker "github.com/mradrianhh/Networker"
-
 // Request ...
 type Request struct {
-	messageType networker.MessageType
-	requestCode networker.RequestCode
+	messageType MessageType
+	requestCode RequestCode
 }
 
 // NewRequest returns a new request-object with the given requestcode.
-func NewRequest(requestCode networker.RequestCode) Request {
+func NewRequest(requestCode RequestCode) Request {
 	return Request{
-		messageType: networker.RESPONSE,
+		messageType: RESPONSE,
 		requestCode: requestCode,
 	}
 }
 
 // MessageType returns the messagetype of the request.
-func (request Request) MessageType() networker.MessageType {
+func (request Request) MessageType() MessageType {
 	return request.messageType
 }
 
 // RequestCode returns the requestcode of the request.
-func (request Request) RequestCode() networker.RequestCode {
+func (request Request) RequestCode() RequestCode {
 	return request.requestCode
 }
