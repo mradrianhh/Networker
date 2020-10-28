@@ -12,10 +12,18 @@ const (
 // ResponseCode ...
 type ResponseCode string
 
+// Response codes.
+const (
+	VALID        = "VALID"
+	INVALID      = "INVALID"
+	ERROR        = "ERROR"
+	CONFIRMATION = "CONFIRMATION"
+)
+
 // RequestCode ...
 type RequestCode string
 
-// Response codes.
+// Request codes.
 const (
 	USERNAME = "USERNAME"
 )

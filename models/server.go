@@ -20,8 +20,6 @@ The server has a list of the messages that has been passed.
 The server also needs a way to respond(i.e callbacks/handler-methods). How can I implement the callback mechanism?
 */
 
-type handler func(Message, net.Conn) error
-
 // Server ...
 type Server struct {
 	network  string
@@ -29,7 +27,7 @@ type Server struct {
 	conns    []net.Conn
 	errors   []error
 	messages []Message
-	handlers map[networker.RequestCode]handler
+	handlers map[networker.RequestCode]Handler
 }
 
 // NewServer returns a new server-object. The lists are empty and must be initialized manually.
@@ -40,8 +38,13 @@ func NewServer(network string, address string) Server {
 		conns:    []net.Conn{},
 		errors:   []error{},
 		messages: []Message{},
-		handlers: make(map[networker.RequestCode]handler),
+		handlers: make(map[networker.RequestCode]Handler),
 	}
+}
+
+// AddHandler adds a handler-method to the server.
+func (server *Server) AddHandler(requestCode networker.RequestCode, handler Handler) {
+	server.handlers[requestCode] = handler
 }
 
 // Listen listens for connections, reads the request, and responds with the appropriate handler-method.
@@ -68,10 +71,27 @@ func (server *Server) Listen() {
 		fmt.Println(request.requestCode)
 		server.messages = append(server.messages, request)
 		if err := server.handlers[request.requestCode](request, conn); err != nil {
+			server.respond(NewResponse(networker.ERROR), conn)
 			server.errors = append(server.errors, err)
 			continue
+		} else {
+			server.respond(NewResponse(networker.CONFIRMATION), conn)
 		}
 	}
+}
+
+// Broadcast ...
+func (server Server) broadcast(message Message) {
+	for i := 0; i < len(server.conns); i++ {
+		encoder := gob.NewEncoder(server.conns[i])
+		encoder.Encode(message)
+	}
+}
+
+// Respond ...
+func (server Server) respond(response Response, conn net.Conn) {
+	encoder := gob.NewEncoder(conn)
+	encoder.Encode(response)
 }
 
 func (server *Server) checkError(err error) {
